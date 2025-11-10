@@ -24,8 +24,14 @@ jobs:
 
     - name: Build
       run: dotnet build
+      
+    - name: Install dotnet-ef
+      run: dotnet tool install --global dotnet-ef --version 9.0.10
+
+    - name: Add dotnet tools to PATH
+      run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
     - name: Run migrations
       env:
-       ConnectionStrings__DefaultConnection: ${{ secrets.MYSQL_CONNECTION }}
-      run: dotnet ef database update --project ./src/Infrastructure/Infrastructure.csproj --startup-project ./src/Web/Web.csproj
+        ConnectionStrings__DefaultConnection: ${{ secrets.MYSQL_CONNECTION }}
+      run: dotnet ef database update --project ./src/Infrastructure/Infrastructure.csproj --startup-project ./src/Web/Web.cspro
