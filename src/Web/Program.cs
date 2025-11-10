@@ -49,8 +49,9 @@ builder.Services.Configure<CustomAuthenticationService.AutenticacionServiceOptio
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 #region MySQL config
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                      ?? Environment.GetEnvironmentVariable("DefaultConnection");
+var connectionString =
+    Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ??
+    builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
 {
