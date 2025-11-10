@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Core.Services;
+using SpendWise.Core.Services;
 using SpendWise.Core.DTOs;
 using System.Security.Claims;
-using SpendWise.Web.Models.Requests;
 
 namespace SpendWise.Web.Controllers
 {
@@ -22,7 +21,7 @@ namespace SpendWise.Web.Controllers
         private int? GetAuthenticatedUserId()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ??
-                              User.FindFirst("sub") ??          // común en JWT
+                              User.FindFirst("sub") ??
                               User.FindFirst("id") ??
                               User.FindFirst("userId");
 
@@ -35,16 +34,12 @@ namespace SpendWise.Web.Controllers
             return null;
         }
 
-        [HttpGet()]
-        public IActionResult GetCurrentUser()
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentUser()
         {
             try
             {
-                var userId = GetAuthenticatedUserId();
-                if (userId == null)
-                    return Unauthorized("No se pudo determinar el usuario autenticado.");
-
-                var user = _userService.GetUserInfo(userId.Value);
+                var user = await _userService.GetCurrentUserAsync();
 
                 if (user == null)
                     return NotFound("Usuario no encontrado.");
@@ -57,7 +52,7 @@ namespace SpendWise.Web.Controllers
             }
         }
 
-        [HttpDelete()]
+        [HttpDelete]
         public async Task<IActionResult> DeleteCurrentUser()
         {
             try
@@ -66,7 +61,10 @@ namespace SpendWise.Web.Controllers
                 if (userId == null)
                     return Unauthorized("No se pudo determinar el usuario autenticado.");
 
-                await _userService.DeleteUser(userId.Value);
+                var deleted = await _userService.DeleteAsync(userId.Value);
+                if (!deleted)
+                    return NotFound("Usuario no encontrado.");
+
                 return NoContent();
             }
             catch (Exception ex)

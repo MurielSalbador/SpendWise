@@ -10,7 +10,6 @@ using Microsoft.OpenApi.Models;
 using SpendWise.Core.Interfaces;
 using SpendWise.Infrastructure.Repositories;
 using SpendWise.Web.Services;
-using Core.Services;
 using SpendWise.Web.Middleware;
 using SpendWise.Core.Services;
 
